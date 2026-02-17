@@ -15,7 +15,7 @@ on:
   schedule:
     # 매일 UTC 00:00 (한국 시간 09:00)에 실행. 필요 시 cron 수정
     - cron: '0 0 * * *'
-  workflow_dispatch:  # 수동 실행 가능 (Actions 탭에서 Run workflow)
+  workflow_dispatch:  # 수동 실행: Actions → Update website data → Run workflow
 
 permissions:
   contents: write
