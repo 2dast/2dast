@@ -1,0 +1,38 @@
+/* 기본 리셋 & 변수 */
+:root {
+  --color-bg: #0f0f0f;
+  --color-text: #e4e4e4;
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --font-sans: 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  width: 100%;
+}
