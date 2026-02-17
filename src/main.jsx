@@ -4,8 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
 import './index.css'
 
-// 프로덕션( GitHub Pages )은 /2dast, 로컬 dev는 /
-const basename = import.meta.env.PROD ? '/2dast' : '/'
+// Vite base와 동일 (GitHub Pages 서브경로). vite.config.js의 REPO_NAME과 맞음
+const basename = import.meta.env.BASE_URL
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 import { copyFileSync } from 'fs'
 import { resolve } from 'path'
 
-// GitHub Pages URL이 https://<user>.github.io/<repo>/ 이면 저장소 이름과 일치시킬 것
-const repoName = '2dast'
+// GitHub Pages: https://<user>.github.io/<repo>/ → 저장소 이름과 맞출 것
+const REPO_NAME = '2dast'
 
 export default defineConfig({
   plugins: [
@@ -18,5 +18,5 @@ export default defineConfig({
       },
     },
   ],
-  base: `/${repoName}/`,
+  base: `/${REPO_NAME}/`,
 })
