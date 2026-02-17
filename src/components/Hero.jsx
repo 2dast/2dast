@@ -12,7 +12,7 @@ function Hero() {
 
   return (
     <section className="hero">
-      <h1>환영합니다</h1>
+      <h1 className="hello-world">Hello world</h1>
       <p>React + Vite로 만든 웹사이트입니다.</p>
       <a href="#" className="btn" onClick={handleClick}>
         {clicked ? '클릭됨!' : '시작하기'}

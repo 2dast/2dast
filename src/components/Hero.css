@@ -9,6 +9,12 @@
   font-weight: 600;
 }
 
+.hero .hello-world {
+  font-size: 3.5rem;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
 .hero p {
   color: rgba(255, 255, 255, 0.7);
   margin-bottom: 2rem;
