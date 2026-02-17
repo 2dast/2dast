@@ -1,0 +1,58 @@
+/* flexbox 기반 레이아웃, index.css 색상 토큰 사용 */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+}
+
+.tableWrap {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-accent);
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.td {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid rgba(228, 228, 228, 0.12);
+}
+
+.tr:hover .td {
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.placeholder,
+.error {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+}
+
+.placeholder {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}

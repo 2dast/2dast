@@ -1,0 +1,37 @@
+아래의 조건을 모두 적용하여, ResearchPage가 앱에 정상 연결·동작하도록 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-wireframe.mdc
+            - @03-ui.mdc
+
+==============================================
+
+조건-연결) ResearchPage는 반드시 기존 App.jsx에서 이미 사용 중인 경로와 일치시킬 것.
+            - App.jsx의 import 경로: import ResearchPage from './domains/research/ResearchPage'
+            - 따라서 구현 대상 파일은 다음 경로에 두고, 위 import가 그대로 동작하도록 할 것.
+
+조건-파일경로) 구현될 페이지 컴포넌트: src/domains/research/ResearchPage.jsx
+조건-파일경로) 구현될 CSS (모듈 사용): src/domains/research/ResearchPage.module.css
+조건-파일경로) 참고할 데이터 디렉터리: public/data/naver/
+
+==============================================
+
+조건-데이터연결) public 폴더의 JSON은 빌드 후 루트 기준으로 제공되므로, fetch URL은 다음 형태로 할 것.
+            - base URL: import.meta.env.BASE_URL (또는 '/')를 사용하여 dev 및 gh-pages 등 배포 환경 모두에서 동작하도록 할 것.
+            - 데이터 요청 예시: `${base}/data/naver/${filename}` (base 끝의 슬래시 중복 제거 후 사용)
+
+조건-공통목록) 사용할 색상: index.css(또는 global.css)에 명시된 CSS 변수 토큰만 활용할 것.
+
+==============================================
+
+핵심요구사항) fetch-naver-data_네이버골든크로스_YYYYMMDD_HH24MISS 형태의 파일 중
+            마지막(가장 최신) 생성 파일을 참고하여 테이블 형태로 표시할 것.
+
+핵심요구사항) 페이지는 10초마다 새 데이터를 다시 조회하여 갱신할 것.
+
+핵심요구사항) 라우트 /research 로 접근 시 ResearchPage가 렌더링되고, 위 데이터가 로드·테이블로 표시될 것.
+            (App.jsx의 Route path="/research" element={<ResearchPage />} 설정은 유지하며, ResearchPage 쪽만 수정할 것.)

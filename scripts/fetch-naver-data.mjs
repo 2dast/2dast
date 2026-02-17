@@ -64,6 +64,27 @@ function formatTimestamp() {
   return `${y}${m}${d}_${h}${min}${s}`
 }
 
+/** 수치 데이터만 허용: 숫자, +, -, %, "," (및 소수점 .) */
+function sanitizeNumericValue(str) {
+  if (str == null || typeof str !== 'string') return ''
+  return str.replace(/[^0-9+\-%.,]/g, '').trim()
+}
+
+/** 헤더 행에서 열명에 해당하는 열 인덱스 반환, 없으면 -1 */
+function findColumnIndex(headerRow, columnName) {
+  const idx = headerRow.findIndex((cell) => String(cell).trim() === columnName)
+  return idx >= 0 ? idx : -1
+}
+
+/** 등락률이 음수면 전일비 앞에 '-', 양수/0이면 부호 제거 */
+function format전일비By등락률(전일비값, 등락률값) {
+  const trimmed = String(전일비값 ?? '').trim()
+  if (!trimmed) return trimmed
+  const isNegative = String(등락률값 ?? '').trim().startsWith('-')
+  if (isNegative) return trimmed.startsWith('-') ? trimmed : `-${trimmed}`
+  return trimmed.replace(/^\++/, '')
+}
+
 async function fetchTbodyAsJson() {
   const res = await fetch(NAVER_GOLD_URL, { headers: BROWSER_HEADERS })
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${NAVER_GOLD_URL}`)
@@ -91,15 +112,35 @@ async function fetchTbodyAsJson() {
 
   const rows = []
   tbody.find('tr').each((_, tr) => {
-    const cells = $(tr).find('td, th').map((__, cell) => $(cell).text().trim()).get()
+    const $tr = $(tr)
+    const hasNo = $tr.find('td.no, th.no').length > 0
+    const isHeader = $tr.find('th').length > 0
+    if (!hasNo && !isHeader) return
+    const cells = $tr.find('td, th').map((__, cell) => $(cell).text().trim()).get()
     if (cells.length) rows.push(cells)
+  })
+
+  const header = rows[0] ?? []
+  const nameColIndex = findColumnIndex(header, '종목명')
+  const 전일비ColIndex = findColumnIndex(header, '전일비')
+  const 등락률ColIndex = findColumnIndex(header, '등락률')
+
+  const normalizedRows = rows.map((row, rowIndex) => {
+    if (rowIndex === 0) return row
+    const out = row.map((cell, colIndex) =>
+      nameColIndex >= 0 && colIndex === nameColIndex ? cell : sanitizeNumericValue(cell)
+    )
+    if (전일비ColIndex >= 0 && 등락률ColIndex >= 0 && out.length > Math.max(전일비ColIndex, 등락률ColIndex)) {
+      out[전일비ColIndex] = format전일비By등락률(out[전일비ColIndex], out[등락률ColIndex])
+    }
+    return out
   })
 
   return {
     source: NAVER_GOLD_URL,
     fetchedAt: new Date().toISOString(),
     xpath: '/html/body/div[3]/div[2]/div[2]/div[3]/table/tbody',
-    data: { rows },
+    data: { rows: normalizedRows },
   }
 }
 
