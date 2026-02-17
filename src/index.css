@@ -36,3 +36,16 @@ main {
   padding: 3rem 2rem;
   width: 100%;
 }
+
+.domain-page {
+  padding: 1rem 0;
+}
+
+.domain-page h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.domain-page p {
+  opacity: 0.9;
+}

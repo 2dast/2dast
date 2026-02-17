@@ -1,14 +1,28 @@
+import { Link, useLocation } from 'react-router-dom'
 import './Header.css'
 
 function Header() {
+  const location = useLocation()
+
+  const navItems = [
+    { path: '/', label: '홈' },
+    { path: '/stock', label: 'Stock' },
+    { path: '/research', label: 'Research' },
+    { path: '/risk', label: 'Risk' },
+  ]
+
   return (
     <header>
       <nav>
-        <a href="#" className="logo">로고</a>
+        <Link to="/" className="logo">로고</Link>
         <ul>
-          <li><a href="#">홈</a></li>
-          <li><a href="#">소개</a></li>
-          <li><a href="#">연락처</a></li>
+          {navItems.map(({ path, label }) => (
+            <li key={path}>
+              <Link to={path} className={location.pathname === path ? 'active' : ''}>
+                {label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </header>

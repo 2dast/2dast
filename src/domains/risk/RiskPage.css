@@ -1,0 +1,8 @@
+.risk-page .domain-placeholder {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 8px;
+  color: var(--color-text);
+}
