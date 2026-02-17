@@ -20,16 +20,35 @@ function getLatestNaverGoldenCrossFilename() {
   return sorted[0] || null
 }
 
+/** 날짜(YYYY-MM-DD)별로 그룹, 같은 날짜는 시간 기준 마지막 파일만 반환. 날짜 내림차순 */
+function getDateOptions() {
+  const byDate = {}
+  for (const filename of NAVER_GOLDEN_CROSS_FILE_PATTERN) {
+    const m = filename.match(/_(\d{8})_(\d{6})\.json$/)
+    if (!m) continue
+    const [, ymd, hms] = m
+    const dateStr = `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)}`
+    if (!byDate[dateStr] || hms > (byDate[dateStr].time || '')) {
+      byDate[dateStr] = { date: dateStr, time: hms, filename }
+    }
+  }
+  return Object.values(byDate).sort((a, b) => b.date.localeCompare(a.date))
+}
+
 const FETCH_INTERVAL_MS = 10 * 1000 // 10초마다 새 데이터 조회
+const DATE_OPTIONS = getDateOptions()
 
 function ResearchPage() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(DATE_OPTIONS[0]?.date ?? '')
 
   useEffect(() => {
     function loadData() {
-      const filename = getLatestNaverGoldenCrossFilename()
+      const filename = selectedDate
+        ? (DATE_OPTIONS.find((o) => o.date === selectedDate)?.filename ?? null)
+        : getLatestNaverGoldenCrossFilename()
       if (!filename) {
         setLoading(false)
         setError('표시할 데이터 파일이 없습니다.')
@@ -60,7 +79,7 @@ function ResearchPage() {
     loadData()
     const intervalId = setInterval(loadData, FETCH_INTERVAL_MS)
     return () => clearInterval(intervalId)
-  }, [])
+  }, [selectedDate])
 
   if (loading) {
     return (
@@ -90,6 +109,27 @@ function ResearchPage() {
       <h1>Research</h1>
       <p>리서치·백테스트·논문·분석 관련 화면입니다.</p>
       <div className={styles.tableWrap}>
+        {DATE_OPTIONS.length > 0 && (
+          <div className={styles.toolbar}>
+            <span className={styles.toolbarSpacer} />
+            <label className={styles.selectLabel} htmlFor="research-date-select">
+              날짜
+            </label>
+            <select
+              id="research-date-select"
+              className={styles.select}
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              aria-label="날짜별 검색"
+            >
+              {DATE_OPTIONS.map((opt) => (
+                <option key={opt.date} value={opt.date}>
+                  {opt.date}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <table className={styles.table}>
           <thead>
             <tr>
