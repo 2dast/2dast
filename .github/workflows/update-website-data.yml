@@ -1,0 +1,49 @@
+# 특정 웹사이트 데이터를 JSON으로 저장한 뒤 Git에 커밋·푸시합니다.
+# 사용법: 아래 env.WEBSITE_DATA_URL 을 원하는 URL로 바꾼 뒤,
+# Actions 탭에서 "Update website data" → Run workflow 로 실행하거나
+# 스케줄(cron)에 따라 자동 실행됩니다.
+
+name: Update website data
+
+on:
+  schedule:
+    # 매일 UTC 00:00 (한국 시간 09:00)에 실행. 필요 시 cron 수정
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 수동 실행 가능
+
+permissions:
+  contents: write
+
+env:
+  # 여기를 원하는 웹사이트 URL로 변경하세요. (JSON API 또는 HTML 페이지)
+  WEBSITE_DATA_URL: https://example.com/api/data
+  OUTPUT_PATH: public/data/website-data.json
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch website data and save JSON
+        run: node scripts/fetch-website-data.mjs
+        env:
+          WEBSITE_DATA_URL: ${{ env.WEBSITE_DATA_URL }}
+          OUTPUT_PATH: ${{ env.OUTPUT_PATH }}
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ env.OUTPUT_PATH }}"
+          git diff --staged --quiet || (git commit -m "chore: update website data JSON" && git push)
