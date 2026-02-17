@@ -6,6 +6,12 @@
 name: Update website data
 
 on:
+  push:
+    branches: [main]
+    paths:
+      # 워크플로/스크립트 변경 시에만 실행. 데이터만 바꿀 땐 제외하려면 paths 제거
+      - '.github/workflows/update-website-data.yml'
+      - 'scripts/fetch-website-data.mjs'
   schedule:
     # 매일 UTC 00:00 (한국 시간 09:00)에 실행. 필요 시 cron 수정
     - cron: '0 0 * * *'
