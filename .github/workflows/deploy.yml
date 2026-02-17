@@ -24,6 +24,14 @@ jobs:
           npm ci
           npm run build
 
+      - name: Verify build output
+        run: |
+          echo "=== dist/index.html ==="
+          head -15 dist/index.html
+          echo "=== dist listing ==="
+          ls -la dist/
+          ls -la dist/assets/ || true
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
