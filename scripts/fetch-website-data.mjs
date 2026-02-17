@@ -26,17 +26,45 @@ if (!WEBSITE_DATA_URL) {
 
 const outputFull = resolve(root, OUTPUT_PATH)
 
+// 10-url-request: 일반 브라우저처럼 헤더, 응답은 UTF-8로 통일해 한글 깨짐 방지
+const BROWSER_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Cache-Control': 'no-cache',
+  'Pragma': 'no-cache',
+  'Sec-Fetch-Dest': 'document',
+  'Sec-Fetch-Mode': 'navigate',
+  'Sec-Fetch-Site': 'none',
+  'Upgrade-Insecure-Requests': '1',
+}
+
+function getCharset(contentTypeHeader, buffer) {
+  const m = contentTypeHeader.match(/charset\s*=\s*["']?([\w-]+)/i)
+  if (m) return m[1].toLowerCase().replace(/^x-/, '')
+  // HTML meta charset (앞 4KB만 UTF-8로 읽어서 확인)
+  try {
+    const head = Buffer.from(buffer.slice(0, 4096)).toString('utf8')
+    const meta = head.match(/<meta[^>]+charset\s*=\s*["']?([\w-]+)/i)
+    if (meta) return meta[1].toLowerCase()
+  } catch (_) {}
+  return 'utf-8'
+}
+
+async function decodeToUtf8(buffer, charset) {
+  if (!charset || charset === 'utf-8' || charset === 'utf8') return Buffer.from(buffer).toString('utf8')
+  const iconv = await import('iconv-lite')
+  return iconv.default.decode(Buffer.from(buffer), charset)
+}
+
 async function fetchAsJson(url) {
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.8',
-    },
-  })
+  const res = await fetch(url, { headers: BROWSER_HEADERS })
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${url}`)
   const contentType = res.headers.get('content-type') || ''
-  const text = await res.text()
+  const buffer = new Uint8Array(await res.arrayBuffer())
+  const charset = getCharset(contentType, buffer)
+  const text = await decodeToUtf8(buffer, charset)
 
   if (contentType.includes('application/json')) {
     return { source: url, fetchedAt: new Date().toISOString(), data: JSON.parse(text) }
