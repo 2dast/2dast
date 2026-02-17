@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// GitHub Pages: 상대 경로로 하면 /2dast/ 또는 루트 어디서든 동작
+// GitHub Pages: 접속 주소가 https://2dast.github.io/2dast/ 이므로 base 필수
 export default defineConfig({
   plugins: [react()],
-  base: './',
+  base: '/2dast/',
 })
